@@ -31,6 +31,9 @@ public class RabbitMqEventListenerProvider implements EventListenerProvider {
 		this.cfg = cfg;
 		this.channel = channel;
 		this.session = session;
+		// Register the transaction with the session
+		// This will ensure that the transaction is committed or rolled back when the
+		// session is closed
 		session.getTransactionManager().enlistAfterCompletion(tx);
 	}
 
@@ -39,11 +42,13 @@ public class RabbitMqEventListenerProvider implements EventListenerProvider {
 
 	}
 
+	// Called when a user event occurs
 	@Override
 	public void onEvent(Event event) {
 		tx.addEvent(event.clone());
 	}
 
+	// Called when an admin event occurs
 	@Override
 	public void onEvent(AdminEvent adminEvent, boolean includeRepresentation) {
 		tx.addAdminEvent(adminEvent, includeRepresentation);

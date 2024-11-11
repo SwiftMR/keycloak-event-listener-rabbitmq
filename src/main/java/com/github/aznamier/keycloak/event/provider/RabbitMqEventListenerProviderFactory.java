@@ -3,7 +3,7 @@ package com.github.aznamier.keycloak.event.provider;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import java.io.IOException;
+
 import java.util.concurrent.TimeoutException;
 //
 import java.io.*;
@@ -44,6 +44,8 @@ public class RabbitMqEventListenerProviderFactory implements EventListenerProvid
         }
     }
 
+    // Only called once when the factory is first created
+    // config는 keycloak.conf혹은
     @Override
     public void init(Scope config) {
         cfg = RabbitMqConfig.createFromScope(config);
@@ -54,6 +56,7 @@ public class RabbitMqEventListenerProviderFactory implements EventListenerProvid
         this.connectionFactory.setVirtualHost(cfg.getVhost());
         this.connectionFactory.setHost(cfg.getHostUrl());
         this.connectionFactory.setPort(cfg.getPort());
+        // connection을 자동으로 복구하도록 설정
         this.connectionFactory.setAutomaticRecoveryEnabled(true);
 
         if (cfg.getUseTls()) {
@@ -106,6 +109,7 @@ public class RabbitMqEventListenerProviderFactory implements EventListenerProvid
 
     }
 
+    // This is called when the server shuts down
     @Override
     public void close() {
         try {
@@ -116,6 +120,7 @@ public class RabbitMqEventListenerProviderFactory implements EventListenerProvid
         }
     }
 
+    // provider를 식별하는 고유 ID반환
     @Override
     public String getId() {
         return "keycloak-to-rabbitmq";
