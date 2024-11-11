@@ -19,7 +19,7 @@ import com.rabbitmq.client.Channel;
 public class RabbitMqEventListenerProvider implements EventListenerProvider {
 
 	private static final Logger log = Logger.getLogger(RabbitMqEventListenerProvider.class);
-	
+
 	private final RabbitMqConfig cfg;
 	private final Channel channel;
 
@@ -48,30 +48,32 @@ public class RabbitMqEventListenerProvider implements EventListenerProvider {
 	public void onEvent(AdminEvent adminEvent, boolean includeRepresentation) {
 		tx.addAdminEvent(adminEvent, includeRepresentation);
 	}
-	
+
 	private void publishEvent(Event event) {
 		EventClientNotificationMqMsg msg = EventClientNotificationMqMsg.create(event);
 		String routingKey = RabbitMqConfig.calculateRoutingKey(event, session);
 		String messageString = RabbitMqConfig.writeAsJson(msg, true);
-		
-		BasicProperties msgProps = RabbitMqEventListenerProvider.getMessageProps(EventClientNotificationMqMsg.class.getName());
+
+		BasicProperties msgProps = RabbitMqEventListenerProvider
+				.getMessageProps(EventClientNotificationMqMsg.class.getName());
 		this.publishNotification(messageString, msgProps, routingKey);
 	}
-	
+
 	private void publishAdminEvent(AdminEvent adminEvent, boolean includeRepresentation) {
 		EventAdminNotificationMqMsg msg = EventAdminNotificationMqMsg.create(adminEvent);
 		String routingKey = RabbitMqConfig.calculateRoutingKey(adminEvent, session);
 		String messageString = RabbitMqConfig.writeAsJson(msg, true);
 
-		BasicProperties msgProps = RabbitMqEventListenerProvider.getMessageProps(EventAdminNotificationMqMsg.class.getName());
-		this.publishNotification(messageString,msgProps, routingKey);
+		BasicProperties msgProps = RabbitMqEventListenerProvider
+				.getMessageProps(EventAdminNotificationMqMsg.class.getName());
+		this.publishNotification(messageString, msgProps, routingKey);
 	}
-	
+
 	private static BasicProperties getMessageProps(String className) {
-		
-		Map<String,Object> headers = new HashMap<>();
+
+		Map<String, Object> headers = new HashMap<>();
 		headers.put("__TypeId__", className);
-		
+
 		Builder propsBuilder = new AMQP.BasicProperties.Builder()
 				.appId("Keycloak")
 				.headers(headers)

@@ -11,7 +11,7 @@
 
     <name>Keycloak: Event Publisher to RabbitMQ</name>
     <properties>
-    	<keycloak.version>21.1.2</keycloak.version>
+    	<keycloak.version>23.0.0</keycloak.version>
     	<jar.finalName>${project.artifactId}-${project.version}</jar.finalName>
     </properties>
     
@@ -64,6 +64,17 @@
 		    <artifactId>amqp-client</artifactId>
 		    <version>5.14.2</version>
 		</dependency>
+
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>3.0.1</version> <!-- 또는 최신 버전 -->
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>3.0.1</version>
+        </dependency>
         
     </dependencies>
 
